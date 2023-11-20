@@ -29,7 +29,7 @@ impl<'a> DynKeyRing for LinuxOsKeyRing<'a> {
             collection.unlock().map_err(KeyRingError::from)?
         }
         let attributes = maplit::hashmap![
-            "application" => "lox",
+            "application" => "cryptex",
             "service" => &self.service,
             "username" => &self.username,
             "id" => id,
@@ -51,7 +51,7 @@ impl<'a> DynKeyRing for LinuxOsKeyRing<'a> {
             collection.unlock().map_err(KeyRingError::from)?
         }
         let attributes = maplit::hashmap![
-            "application" => "lox",
+            "application" => "cryptex",
             "service" => &self.service,
             "username" => &self.username,
             "id" => id,
@@ -77,7 +77,7 @@ impl<'a> DynKeyRing for LinuxOsKeyRing<'a> {
             collection.unlock().map_err(KeyRingError::from)?
         }
         let attributes = maplit::hashmap![
-            "application" => "lox",
+            "application" => "cryptex",
             "service" => &self.service,
             "username" => &self.username,
             "id" => id,

@@ -8,7 +8,7 @@ use std::{
     fmt::{self, Debug, Display, Formatter},
 };
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "android"))]
 use secret_service::Error as LinuxOsError;
 #[cfg(target_os = "macos")]
 use security_framework::base::Error as MacOsError;
@@ -53,7 +53,7 @@ impl From<&str> for KeyRingError {
 impl Error for KeyRingError {}
 
 #[cfg(target_os = "macos")]
-#[cfg_attr(docsrs, doc(cfg(target_os = "macos")))]
+#[cfg_attr(docsrs, doc(cfg(any(target_os = "macos", target_os = "macos"))))]
 impl From<MacOsError> for KeyRingError {
     fn from(e: MacOsError) -> Self {
         match e.code() {
@@ -68,8 +68,8 @@ impl From<MacOsError> for KeyRingError {
     }
 }
 
-#[cfg(target_os = "linux")]
-#[cfg_attr(docsrs, doc(cfg(target_os = "linux")))]
+#[cfg(any(target_os = "linux", target_os = "android"))]
+#[cfg_attr(docsrs, doc(cfg(any(target_os = "linux", target_os = "android"))))]
 impl From<LinuxOsError> for KeyRingError {
     fn from(e: LinuxOsError) -> Self {
         match e {

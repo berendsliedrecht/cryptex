@@ -25,7 +25,7 @@ mod test {
             ("", 0),
             ("kind=generic", 1),
             ("kind=internet,account=aws", 2),
-            ("account=aws,service=lox", 2),
+            ("account=aws,service=cryptex", 2),
         ] {
             let criteria = parse_peek_criteria(pair.0);
             assert_eq!(criteria.len(), pair.1);

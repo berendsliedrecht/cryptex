@@ -46,7 +46,7 @@ rusqlite = { version = "0.29", features = ["bundled-sqlcipher-vendored-openssl"]
 [dev-dependencies]
 tokio = { version = "1", features = ["rt", "rt-multi-thread", "macros"] }
 
-[target.'cfg(any(target_os = "macos", target_os = "linux"))'.dependencies]
+[target.'cfg(any(target_os = "macos", target_os = "linux", target_os = "android"))'.dependencies]
 users = "0.11"
 
 [target.'cfg(target_os = "macos")'.dependencies]
@@ -55,7 +55,7 @@ security-framework-sys = "2.9"
 core-foundation = "0.9"
 core-foundation-sys = "0.8"
 
-[target.'cfg(target_os = "linux")'.dependencies]
+[target.'cfg(any(target_os = "linux", target_os = "android"))'.dependencies]
 maplit = "1"
 secret-service = "2"
 

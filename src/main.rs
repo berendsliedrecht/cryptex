@@ -24,7 +24,7 @@ use std::collections::BTreeMap;
 #[cfg(target_os = "macos")]
 use cryptex::macos::MacOsKeyRing as OsKeyRing;
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "android"))]
 use cryptex::linux::LinuxOsKeyRing as OsKeyRing;
 
 #[cfg(target_os = "windows")]
@@ -34,7 +34,7 @@ fn main() {
     let mut temp = App::new("Cryptex")
         .version("0.1")
         .author("Michael Lodder")
-        .about("Lox is a platform independent program for storing and retrieving information from secure enclaves or keyrings");
+        .about("Cryptex is a platform independent program for storing and retrieving information from secure enclaves or keyrings");
     if allows_file() {
         temp = temp.arg(Arg::with_name("FILE").takes_value(false));
     }
@@ -67,7 +67,7 @@ fn main() {
         .subcommand(SubCommand::with_name("delete")
             .about("Delete a secret identified by ID. If no ID is specified or ID is '-', input is received from STDIN")
             .arg(Arg::with_name("SERVICE")
-                .help("The service name to use for associating with this secret. The reason a service name is required is if no service name is specified, the default name would be the current calling process name. This sort of behavior has been known to lead to privilege escalation when used incorrectly so it is preferred to specify a service name. Use the keyword 'kind' to designate which type of secret to look for on OSX. 'kind' can be either internet or generic. If 'kind' is not specified, Lox will try whichever type can be searched based on the other criteria provided")
+                .help("The service name to use for associating with this secret. The reason a service name is required is if no service name is specified, the default name would be the current calling process name. This sort of behavior has been known to lead to privilege escalation when used incorrectly so it is preferred to specify a service name. Use the keyword 'kind' to designate which type of secret to look for on OSX. 'kind' can be either internet or generic. If 'kind' is not specified, Cryptex will try whichever type can be searched based on the other criteria provided")
                 .required(true)
                 .index(1))
             .arg(Arg::with_name("ID")
@@ -75,9 +75,9 @@ fn main() {
                 .required(false)
                 .index(2)))
         .subcommand(SubCommand::with_name("peek")
-            .about("Look up a secret identified by ID that is not managed by Lox. If no ID is specified or ID is '-', input is received from STDIN")
+            .about("Look up a secret identified by ID that is not managed by Cryptex. If no ID is specified or ID is '-', input is received from STDIN")
             .arg(Arg::with_name("ID")
-                .help("The ID to retrieve. If no ID is specified or ID is '-', input is received from STDIN. The ID if formatted by using name-value pairs comma separated. For example, if you wanted to peek at any ID in the keyring with two attributes service and account, it would look like service=lox,account=api. Lox returns any items that it finds matching the search criteria")
+                .help("The ID to retrieve. If no ID is specified or ID is '-', input is received from STDIN. The ID if formatted by using name-value pairs comma separated. For example, if you wanted to peek at any ID in the keyring with two attributes service and account, it would look like service=cryptex,account=api. Cryptex returns any items that it finds matching the search criteria")
                 .required(false)
                 .index(1)))
         .subcommand(SubCommand::with_name("list")
@@ -171,7 +171,7 @@ fn get_id(matches: &ArgMatches, read_stdin: bool) -> String {
     id_str
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "android"))]
 fn get_keyring<'a>(matches: &'a ArgMatches) -> OsKeyRing<'a> {
     let service = matches.value_of("SERVICE").unwrap();
     match get_os_keyring(service) {
@@ -180,7 +180,7 @@ fn get_keyring<'a>(matches: &'a ArgMatches) -> OsKeyRing<'a> {
     }
 }
 
-#[cfg(not(target_os = "linux"))]
+#[cfg(not(any(target_os = "linux", target_os = "android")))]
 fn get_keyring(matches: &ArgMatches) -> OsKeyRing {
     let service = matches.value_of("SERVICE").unwrap();
     match get_os_keyring(service) {

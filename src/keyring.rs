@@ -5,7 +5,7 @@
 
 mod keyringsecret;
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "android"))]
 pub mod linux;
 #[cfg(target_os = "macos")]
 pub mod macos;
@@ -18,8 +18,8 @@ pub mod windows;
 #[cfg_attr(docsrs, doc(cfg(target_os = "macos")))]
 pub use self::macos::MacOsKeyRing as OsKeyRing;
 
-#[cfg(target_os = "linux")]
-#[cfg_attr(docsrs, doc(cfg(target_os = "linux")))]
+#[cfg(any(target_os = "linux", target_os = "android"))]
+#[cfg_attr(docsrs, doc(cfg(any(target_os = "android", target_os = "linux"))))]
 pub use self::linux::LinuxOsKeyRing as OsKeyRing;
 
 #[cfg(target_os = "windows")]
@@ -32,7 +32,7 @@ pub type Result<T> = std::result::Result<T, crate::error::KeyRingError>;
 
 pub use keyringsecret::*;
 
-#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[cfg(any(target_os = "linux", target_os = "android", target_os = "macos",))]
 use users::{get_current_username, get_effective_username};
 
 /// Return the OS keyring if available
@@ -43,16 +43,21 @@ pub fn get_os_keyring(service: &str) -> Result<OsKeyRing> {
 }
 
 /// Return the OS keyring if available
-#[cfg(target_os = "linux")]
-#[cfg_attr(docsrs, doc(cfg(target_os = "linux")))]
+#[cfg(any(target_os = "linux", target_os = "android"))]
+#[cfg_attr(docsrs, doc(cfg(any(target_os = "linux", target_os = "android"))))]
 pub fn get_os_keyring(service: &str) -> Result<OsKeyRing<'_>> {
     OsKeyRing::new(service)
 }
 
-#[cfg(not(any(target_os = "linux", target_os = "macos", target_os = "windows")))]
+#[cfg(not(any(
+    target_os = "linux",
+    target_os = "macos",
+    target_os = "windows",
+    target_os = "android",
+)))]
 compile_error!("no keyring implementation is available for this platform");
 
-#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[cfg(any(target_os = "linux", target_os = "macos", target_os = "android"))]
 fn get_username() -> String {
     fn get_current_user() -> String {
         match get_current_username() {
@@ -131,7 +136,7 @@ pub trait ListKeyRing {
     fn list_secrets() -> Result<Vec<BTreeMap<String, String>>>;
 }
 
-#[cfg(any(target_os = "macos", target_os = "linux"))]
+#[cfg(any(target_os = "macos", target_os = "linux", target_os = "android"))]
 pub(crate) fn parse_peek_criteria(id: &str) -> BTreeMap<String, String> {
     let mut result = BTreeMap::new();
     if !id.is_empty() {
